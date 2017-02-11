@@ -68,12 +68,15 @@ buildct () {
     # Set the hostname for container
     vzctl set "$ctid" --hostname "$container_hostname" --save
     # Set disk quota for container, softlimit:hardlimit
-    vzctl set "$ctid" --diskspace "$container_diskquota":"$container_diskquota" --save
+    vzctl set "$ctid" --diskspace "$container_diskquota" --save
     # Set ram size for container
     vzctl set "$ctid" --ram "$container_ramsize" --swap "$container_swapsize" --save
-    vzctl set "$ctid" --vmguarpages "$container_ramsize" --save
-    vzctl set "$ctid" --oomguarpages "$container_ramsize" --save
-    vzctl set "$ctid" --privvmpages "$container_ramsize":"$container_totalram" --save
+    vzctl set "$ctid" --privvmpages "unlimited" --save
+    vzctl set "$ctid" --vmguarpages "unlimited" --save
+    vzctl set "$ctid" --oomguarpages "unlimited" --save
+    vzctl set "$ctid" --kmemsize "$((524288 * $ramnounit))" --save
+    vzctl set "$ctid" --lockedpages "$((128 * $ramnounit))" --save
+    vzctl set "$ctid" --dcachesize "$((262144 * $ramnounit))" --save
     # Set root user password for container
     vzctl set "$ctid" --userpasswd root:"$container_rootpass" --save
     # Set TUN/TAP/PPP if selected
@@ -1123,15 +1126,18 @@ domodifyct () {
     fi
     if [[ $modify_ram ]]; then
         vzctl set "$ctid" --ram "$container_ramsize" --swap "$container_swapsize" --save
-        vzctl set "$ctid" --vmguarpages "$container_ramsize" --save
-        vzctl set "$ctid" --oomguarpages "$container_ramsize" --save
-        vzctl set "$ctid" --privvmpages "$container_ramsize":"$container_totalram" --save
+        vzctl set "$ctid" --privvmpages "unlimited" --save
+        vzctl set "$ctid" --vmguarpages "unlimited" --save
+        vzctl set "$ctid" --oomguarpages "unlimited" --save
+        vzctl set "$ctid" --kmemsize "$((524288 * $ramnounit))" --save
+        vzctl set "$ctid" --lockedpages "$((128 * $ramnounit))" --save
+        vzctl set "$ctid" --dcachesize "$((262144 * $ramnounit))" --save
         sed -i "s/^#\s*CONTAINER_RAM_SIZE.*/# CONTAINER_RAM_SIZE:$container_ramsize/g" /etc/vz/conf/$ctid.conf
         sed -i "s/^#\s*CONTAINER_SWAP_SIZE.*/# CONTAINER_SWAP_SIZE:$container_swapsize/g" /etc/vz/conf/$ctid.conf
         unset modify_ram
     fi
     if [[ $modify_disk ]]; then
-        vzctl set "$ctid" --diskspace "$container_diskquota":"$container_diskquota" --save
+        vzctl set "$ctid" --diskspace "$container_diskquota" --save
         sed -i "s/^#\s*CONTAINER_DISK_QUOTA.*/# CONTAINER_DISK_QUOTA:$container_diskquota/g" /etc/vz/conf/$ctid.conf
         unset modify_disk
     fi
