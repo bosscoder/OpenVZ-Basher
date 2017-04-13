@@ -26,7 +26,7 @@ getrandpass () {
 
 # Get next available container ID
 getctid () {
-    ctid=1
+    ctid=11
     while true; do
         checkctid=$(vzlist -a -o ctid | grep -w $ctid)
         if [[ -z $checkctid ]]; then
