@@ -80,7 +80,7 @@ doinstall () {
     iptables -F
     iptables -X
     iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-    IPoct=1
+    IPoct=11
     while [[ $IPoct -lt 255 ]]; do
         intIP=192.168.1."$IPoct"
         iptables -t nat -A PREROUTING -i eth0 -p tcp --dport "$IPoct"22 -j DNAT --to $intIP:22
@@ -395,7 +395,7 @@ else
     esac
 
     echo "A private NAT IP network has been created for you!"
-    echo "Available IPs: 192.168.1.1 - 192.168.1.254"
+    echo "Available IPs: 192.168.1.11 - 192.168.1.254"
     echo "-------------------------------------------------------"
     echo "A reboot is required to use the OpenVZ kernel."
     read -p "Would you like to reboot now? [y/N] " rbto
