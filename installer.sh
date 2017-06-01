@@ -85,6 +85,7 @@ doinstall () {
         intIP=192.168.1."$IPoct"
         iptables -t nat -A PREROUTING -i eth0 -p tcp --dport "$IPoct"22 -j DNAT --to $intIP:22
         iptables -t nat -A PREROUTING -i eth0 -p tcp --dport "$IPoct"01:"$IPoct"20 -j DNAT --to $intIP
+        iptables -t nat -A PREROUTING -i eth0 -p udp --dport "$IPoct"01:"$IPoct"20 -j DNAT --to $intIP
         ((IPoct++))
     done
     iptables-save > /etc/sysconfig/iptables
